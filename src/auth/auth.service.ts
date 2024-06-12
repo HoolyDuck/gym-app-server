@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { TokensDto } from './dto/tokens.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,22 +14,39 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(user: User) {
-    const payload = { email: user.email, sub: user.id };
+  async login(user: User): Promise<TokensDto> {
+    const payload = { sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
+  }
+
+  async getProfile(user: User): Promise<User | null> {
+    console.log(user);
+    const foundUser = await this.userService.findOne({ id: user.id });
+    if (!foundUser) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return foundUser;
   }
 
   async validateUser(loginDto: LoginDto): Promise<User | null> {
     const user = await this.userService.findOne({ email: loginDto.email });
-    if (
-      user &&
-      (await this.comparePasswords(loginDto.password, user.password))
-    ) {
-      return user;
+    if (!user) {
+      throw new Error('User not found');
     }
-    return null;
+
+    const isPasswordValid = await this.comparePasswords(
+      loginDto.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new Error('Invalid password');
+    }
+
+    return user;
   }
 
   async hashPassword(password: string): Promise<string> {
@@ -44,9 +62,13 @@ export class AuthService {
     return bcrypt.compare(password, hashedPassword);
   }
 
-  async register(registerDto: RegisterDto): Promise<User> {
+  async register(registerDto: RegisterDto): Promise<void> {
+    const user = await this.userService.findOne({ email: registerDto.email });
+    if (user) {
+      throw new UnauthorizedException('User already exists');
+    }
     const hashedPassword = await this.hashPassword(registerDto.password);
-    return this.userService.create({
+    await this.userService.create({
       ...registerDto,
       password: hashedPassword,
     });

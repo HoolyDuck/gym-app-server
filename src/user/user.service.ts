@@ -10,9 +10,7 @@ export class UserService {
 
   create(createUserDto: CreateUserDto) {
     return this.prismaService.user.create({
-      data: {
-        ...createUserDto,
-      },
+      data: createUserDto,
     });
   }
 
@@ -21,7 +19,7 @@ export class UserService {
   }
 
   findOne(params: Prisma.UserWhereUniqueInput) {
-    return this.prismaService.user.findUnique({
+    return this.prismaService.user.findFirst({
       where: params,
     });
   }
