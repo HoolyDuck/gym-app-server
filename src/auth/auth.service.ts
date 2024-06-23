@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/user/entities/user.entity';
@@ -34,7 +38,7 @@ export class AuthService {
   async validateUser(loginDto: LoginDto): Promise<User | null> {
     const user = await this.userService.findOne({ email: loginDto.email });
     if (!user) {
-      throw new Error('User not found');
+      throw new BadRequestException('User not found');
     }
 
     const isPasswordValid = await this.comparePasswords(
@@ -43,7 +47,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new BadRequestException('Invalid password');
     }
 
     return user;
