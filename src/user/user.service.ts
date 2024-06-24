@@ -24,14 +24,14 @@ export class UserService {
     });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     return this.prismaService.user.update({
       where: { id },
       data: updateUserDto,
     });
   }
 
-  remove(id: string) {
+  remove(id: number) {
     return this.prismaService.user.delete({
       where: { id },
     });

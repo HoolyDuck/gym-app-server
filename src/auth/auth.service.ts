@@ -25,7 +25,7 @@ export class AuthService {
     };
   }
 
-  async getProfile(user: User): Promise<User | null> {
+  async getProfile(user: { id: number }): Promise<User | null> {
     console.log(user);
     const foundUser = await this.userService.findOne({ id: user.id });
     if (!foundUser) {
