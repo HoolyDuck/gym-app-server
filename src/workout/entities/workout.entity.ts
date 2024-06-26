@@ -1,4 +1,4 @@
-import { WorkoutExerciseEntity } from 'src/workout-exercise/entities/workout-exercise.entity';
+import { WorkoutExerciseEntity } from './workout-exercise.entity';
 
 export class WorkoutEntity {
   id: number;
@@ -6,7 +6,6 @@ export class WorkoutEntity {
   description: string;
   userId: number;
   workoutExercises?: WorkoutExerciseEntity[];
-
   createdAt: Date;
   updatedAt: Date;
 }

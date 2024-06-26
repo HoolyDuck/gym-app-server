@@ -7,7 +7,6 @@ import { AuthModule } from '../auth/auth.module';
 import config from 'src/config/config';
 import { WorkoutModule } from 'src/workout/workout.module';
 import { ExerciseModule } from 'src/exercise/exercise.module';
-import { WorkoutExerciseModule } from 'src/workout-exercise/workout-exercise.module';
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import { WorkoutExerciseModule } from 'src/workout-exercise/workout-exercise.mod
     AuthModule,
     WorkoutModule,
     ExerciseModule,
-    WorkoutExerciseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
