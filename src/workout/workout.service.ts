@@ -2,22 +2,29 @@ import { Injectable } from '@nestjs/common';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class WorkoutService {
   constructor(private prismaService: PrismaService) {}
 
-  create(createWorkoutDto: CreateWorkoutDto) {
+  create(createWorkoutDto: CreateWorkoutDto, user: User) {
     return this.prismaService.workout.create({
-      data: createWorkoutDto,
+      data: {
+        ...createWorkoutDto,
+        userId: user.id,
+      },
     });
   }
 
   findAll() {
     return this.prismaService.workout.findMany({
       include: {
-        workoutExercises: true,
+        workoutExercises: {
+          include: {
+            exercise: true,
+          },
+        },
       },
     });
   }
@@ -26,7 +33,11 @@ export class WorkoutService {
     return this.prismaService.workout.findUnique({
       where: params,
       include: {
-        workoutExercises: true,
+        workoutExercises: {
+          include: {
+            exercise: true,
+          },
+        },
       },
     });
   }

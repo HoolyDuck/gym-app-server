@@ -35,11 +35,11 @@ export class ExerciseController {
     @Param('id') id: string,
     @Body() updateExerciseDto: UpdateExerciseDto,
   ) {
-    return this.exerciseService.update({ id: +id }, updateExerciseDto);
+    return this.exerciseService.update(+id, updateExerciseDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.exerciseService.remove({ id: +id });
+    return this.exerciseService.remove(+id);
   }
 }

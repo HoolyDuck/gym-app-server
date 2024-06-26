@@ -1,4 +1,4 @@
-export class Exercise {
+export class ExerciseEntity {
   id: number;
   name: string;
   description: string;

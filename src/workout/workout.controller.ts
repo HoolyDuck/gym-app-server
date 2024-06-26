@@ -12,6 +12,8 @@ import { WorkoutService } from './workout.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 @Controller('workout')
 @UseGuards(JwtAuthGuard)
@@ -19,8 +21,8 @@ export class WorkoutController {
   constructor(private readonly workoutService: WorkoutService) {}
 
   @Post()
-  create(@Body() createWorkoutDto: CreateWorkoutDto) {
-    return this.workoutService.create(createWorkoutDto);
+  create(@Body() createWorkoutDto: CreateWorkoutDto, @GetUser() user: UserEntity) {
+    return this.workoutService.create(createWorkoutDto, user);
   }
 
   @Get()

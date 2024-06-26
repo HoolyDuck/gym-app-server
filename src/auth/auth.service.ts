@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
-import { User } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
@@ -26,7 +26,7 @@ export class AuthService {
     };
   }
 
-  async getProfile(user: { id: number }): Promise<User | null> {
+  async getProfile(user: { id: number }): Promise<UserEntity | null> {
     console.log(user);
     const foundUser = await this.userService.findOne({ id: user.id });
     if (!foundUser) {
@@ -48,7 +48,7 @@ export class AuthService {
     });
   }
 
-  private async validateUser(loginDto: LoginDto): Promise<User | never> {
+  private async validateUser(loginDto: LoginDto): Promise<UserEntity | never> {
     const user = await this.userService.findOne({ email: loginDto.email });
     if (!user) {
       throw new BadRequestException('User not found');

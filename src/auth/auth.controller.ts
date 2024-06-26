@@ -9,7 +9,7 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { User } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { GetUser } from './decorators/get-user.decorator';
 
@@ -29,7 +29,7 @@ export class AuthController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  getProfile(@GetUser() user: User) {
+  getProfile(@GetUser() user: UserEntity) {
     return user;
   }
 }
