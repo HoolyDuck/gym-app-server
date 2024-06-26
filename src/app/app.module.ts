@@ -5,6 +5,9 @@ import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '../auth/auth.module';
 import config from 'src/config/config';
+import { WorkoutModule } from 'src/workout/workout.module';
+import { ExerciseModule } from 'src/exercise/exercise.module';
+import { WorkoutExerciseModule } from 'src/workout-exercise/workout-exercise.module';
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import config from 'src/config/config';
       load: [config],
     }),
     AuthModule,
+    WorkoutModule,
+    ExerciseModule,
+    WorkoutExerciseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

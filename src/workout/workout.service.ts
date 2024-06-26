@@ -15,12 +15,19 @@ export class WorkoutService {
   }
 
   findAll() {
-    return this.prismaService.workout.findMany();
+    return this.prismaService.workout.findMany({
+      include: {
+        workoutExercises: true,
+      },
+    });
   }
 
   findOne(params: Prisma.WorkoutWhereUniqueInput) {
     return this.prismaService.workout.findUnique({
       where: params,
+      include: {
+        workoutExercises: true,
+      },
     });
   }
 
