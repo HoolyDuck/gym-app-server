@@ -31,19 +31,16 @@ export class WorkoutService {
     });
   }
 
-  update(
-    params: Prisma.WorkoutWhereUniqueInput,
-    updateWorkoutDto: UpdateWorkoutDto,
-  ) {
+  update(id: number, updateWorkoutDto: UpdateWorkoutDto) {
     return this.prismaService.workout.update({
-      where: params,
+      where: { id },
       data: updateWorkoutDto,
     });
   }
 
-  remove(params: Prisma.WorkoutWhereUniqueInput) {
+  remove(id: number) {
     return this.prismaService.workout.delete({
-      where: params,
+      where: { id },
     });
   }
 }

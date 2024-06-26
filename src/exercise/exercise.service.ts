@@ -25,18 +25,18 @@ export class ExerciseService {
   }
 
   update(
-    params: Prisma.ExerciseWhereUniqueInput,
+    id: number,
     updateExerciseDto: UpdateExerciseDto,
   ) {
     return this.prismaService.exercise.update({
-      where: params,
+      where: { id },
       data: updateExerciseDto,
     });
   }
 
-  remove(params: Prisma.ExerciseWhereUniqueInput) {
+  remove(id: number) {
     return this.prismaService.exercise.delete({
-      where: params,
+      where: { id },
     });
   }
 }

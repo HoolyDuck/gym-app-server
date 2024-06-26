@@ -35,11 +35,11 @@ export class WorkoutController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWorkoutDto: UpdateWorkoutDto) {
-    return this.workoutService.update({ id: +id }, updateWorkoutDto);
+    return this.workoutService.update(+id, updateWorkoutDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.workoutService.remove({ id: +id });
+    return this.workoutService.remove(+id);
   }
 }
