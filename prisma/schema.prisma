@@ -14,10 +14,73 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  name             String?
+  password         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  workouts         Workout[]
+  trainingSessions TrainingSession[]
+}
+
+model Exercise {
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  description         String
+  muscleGroup         String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  workoutExercises    WorkoutExercise[]
+  sessionExerciseSets SessionExerciseSet[]
+}
+
+model Workout {
+  id               Int               @id @default(autoincrement())
+  name             String
+  description      String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  userId           Int
+  user             User              @relation(fields: [userId], references: [id])
+  workoutExercises WorkoutExercise[]
+  trainingSessions TrainingSession[]
+}
+
+model WorkoutExercise {
+  //id         Int      @id @default(autoincrement())
+  workoutId  Int
+  exerciseId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  workout    Workout  @relation(fields: [workoutId], references: [id])
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+
+  @@id(name: "workoutExerciseId", fields: [workoutId, exerciseId])
+}
+
+model TrainingSession {
+  id                  Int                  @id @default(autoincrement())
+  userId              Int
+  workoutId           Int
+  startTime           DateTime
+  endTime             DateTime
+  notes               String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  user                User                 @relation(fields: [userId], references: [id])
+  workout             Workout              @relation(fields: [workoutId], references: [id])
+  sessionExerciseSets SessionExerciseSet[]
+}
+
+model SessionExerciseSet {
+  id                Int             @id @default(autoincrement())
+  trainingSessionId Int
+  trainingSession   TrainingSession @relation(fields: [trainingSessionId], references: [id])
+  exerciseId        Int
+  exercise          Exercise        @relation(fields: [exerciseId], references: [id])
+  reps              Int
+  weight            Float
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }

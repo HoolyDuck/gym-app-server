@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
-import { User } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
@@ -18,14 +18,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(user: User): Promise<TokensDto> {
+  async login(loginDto: LoginDto): Promise<TokensDto> {
+    const user = await this.validateUser(loginDto);
     const payload = { sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload),
     };
   }
 
-  async getProfile(user: User): Promise<User | null> {
+  async getProfile(user: { id: number }): Promise<UserEntity | null> {
     console.log(user);
     const foundUser = await this.userService.findOne({ id: user.id });
     if (!foundUser) {
@@ -35,7 +36,19 @@ export class AuthService {
     return foundUser;
   }
 
-  async validateUser(loginDto: LoginDto): Promise<User | null> {
+  async register(registerDto: RegisterDto): Promise<void> {
+    const user = await this.userService.findOne({ email: registerDto.email });
+    if (user) {
+      throw new UnauthorizedException('User already exists');
+    }
+    const hashedPassword = await this.hashPassword(registerDto.password);
+    await this.userService.create({
+      ...registerDto,
+      password: hashedPassword,
+    });
+  }
+
+  private async validateUser(loginDto: LoginDto): Promise<UserEntity | never> {
     const user = await this.userService.findOne({ email: loginDto.email });
     if (!user) {
       throw new BadRequestException('User not found');
@@ -53,28 +66,16 @@ export class AuthService {
     return user;
   }
 
-  async hashPassword(password: string): Promise<string> {
+  private async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     return bcrypt.hash(password, salt);
   }
 
-  async comparePasswords(
+  private async comparePasswords(
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
-  }
-
-  async register(registerDto: RegisterDto): Promise<void> {
-    const user = await this.userService.findOne({ email: registerDto.email });
-    if (user) {
-      throw new UnauthorizedException('User already exists');
-    }
-    const hashedPassword = await this.hashPassword(registerDto.password);
-    await this.userService.create({
-      ...registerDto,
-      password: hashedPassword,
-    });
   }
 }
